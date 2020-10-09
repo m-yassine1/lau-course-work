@@ -1,0 +1,107 @@
+This project is comet/space data extraction and analysis written in python (2.x). It takes a comet list and downloads
+results based on which python scripts ran.
+It should work properly provided as long as the file comet-list is provided and has the format explained later on.
+
+-----------------------------------------------------------------------------
+Comet-list.ascii Format:
+
+Line# CometCode/CometName RA DEC X Y /Year/Month/Day/f#/c#/p#/v#/fits image
+
+-----------------------------------------------------------------------------
+Assumptions:
+
+- Some of the string parsed would generate a URL which is not found resulting in 404 error.
+
+- Some comet names that are parsed do now follow certain format so I had to make special cases in regular exprestions.
+
+- Instead of installing each an opener with the saved username and password, we can use cookies.
+
+-----------------------------------------------------------------------------
+Libraries:
+
+- datetime									(Built-in -  For logging)
+- os										(Built-in -  Operating System calls)
+- re 										(Built-in -  Regular Expression)
+- urllib2									(Built-in -  To access the Web and data)
+- name2codepoint 							(Built-in -  For HTML parsing)
+- HTMLParser								(Built-in -  For HTML parsing)
+
+-----------------------------------------------------------------------------
+Dependencies:
+
+- wget 										(https://www.gnu.org/software/wget/)
+- comet-list.ascii							(Found inside the zip)
+- Username and Password						(Provided by Dr. Mouawad)
+
+Note: All files have their own logger which wil be called "log-file name.txt" to keep track.
+
+-----------------------------------------------------------------------------
+usage: [Script Name].py
+
+The user will be prompted for the username and password when needed.
+
+-----------------------------------------------------------------------------
+Transfer.py (Part 1.1)
+
+- This python script will prompt for username and password.
+- It will generate the links based on the naming as described in the document.
+- It will create a Directory called "Space" and two subdirectories called "Fits" and "Ctlg".
+- It will download refimgs and sexctlg files and store them with respect to their extension.
+Note: It will also check for duplicates.
+
+-----------------------------------------------------------------------------
+LinkGenerator.py (Part 1.2)
+
+- This python script will prompt for username and password.
+- It will generate the links based on the naming as described in the document.
+- It will append the refimg and sexctlg for each link.
+- It will store the links in a file called "links.txt" which is a dependancy for Downloader.py.
+Note: It will also check for duplicates.
+
+-----------------------------------------------------------------------------
+links.txt Format:
+
+URL
+
+-----------------------------------------------------------------------------
+Downloader.py (Part 1.2)
+
+- This python script will prompt for username and password.
+- It will access the links found in a folder called "links.txt".
+- It will create a Directory called "Files" and two subdirectories called "Fits" and "Ctlg".
+- It will use wget command to download the files.
+
+-----------------------------------------------------------------------------
+Output.py (Part 2)
+
+- This python script will prompt for username and password.
+- It will reformat the comet-list.ascii for Sarah's project.
+- It will store the output in a file called "output.txt" formatted.
+- It will displat the first refimg found and duplicates will be found inside the log.
+
+-----------------------------------------------------------------------------
+output.txt Format:
+
+Line# CometCode/CometName X Y Range Original_fits_image Original_ctlg_image Reference_fits_image Reference_ctlg_image
+
+Note: Reference are the downloaded images.
+
+-----------------------------------------------------------------------------
+Descriptor.py (Part 3)
+
+- This script will read each line in comet-list-ascii and obtain Data and Comet Name.
+- It will get RA, DEC, and True Anomaly Angle from the horizon website(http://ssd.jpl.nasa.gov/).
+- It will use the Horizon-batch interface which is a fetching data via data provided in the URL and request Data for each comet.
+- It will create two files "comet-list1.ascii" and "comet-list2.ascii" since there will be two dates and stores in each respectively.
+
+-----------------------------------------------------------------------------
+comet-listx.ascii Format:
+
+Line# CometCode/CometName Obtained_RA Obtained_DEC Original_RA Original_DEC X Y True_Anomaly_Angle /Year/Month/Day/f#/c#/p#/v#/fits image
+
+-----------------------------------------------------------------------------
+log-x.txt Format:
+
+[Data time] Description
+
+-----------------------------------------------------------------------------
